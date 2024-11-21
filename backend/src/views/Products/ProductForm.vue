@@ -54,9 +54,7 @@ import store from "../../store/index.js";
 import Spinner from "../../components/core/Spinner.vue";
 import {useRoute, useRouter} from "vue-router";
 import ImagePreview from "../../components/ImagePreview.vue";
-// import the component
 import Treeselect from 'vue3-treeselect'
-// import the styles
 import 'vue3-treeselect/dist/vue3-treeselect.css'
 import axiosClient from "../../axios.js";
 
@@ -77,7 +75,6 @@ const product = ref({
 })
 
 const errors = ref({});
-
 const loading = ref(false)
 const options = ref([])
 
@@ -124,6 +121,7 @@ function onSubmit($event, close = false) {
     store.dispatch('createProduct', product.value)
       .then(response => {
         loading.value = false;
+
         if (response.status === 201) {
           product.value = response.data
           store.commit('showToast', 'Product was successfully created');

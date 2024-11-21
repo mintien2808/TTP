@@ -23,24 +23,20 @@ class Category extends Model
             ->saveSlugsTo('slug');
     }
 
-    public function parent()
-    {
+    public function parent(){
         return $this->belongsTo(Category::class);
     }
 
-    public function products()
-    {
-        return $this->belongsToMany(Product::class); // product_category
+    public function products(){
+        return $this->belongsToMany(Product::class); 
     }
 
-    public static function getActiveAsTree($resourceClassName = null)
-    {
+    public static function getActiveAsTree($resourceClassName = null){
         $categories = Category::where('active', true)->orderBy('parent_id')->get();
         return self::buildCategoryTree($categories, null, $resourceClassName);
     }
 
-    public static function getAllChildrenByParent(Category $category)
-    {
+    public static function getAllChildrenByParent(Category $category){
         $categories = Category::where('active', true)->orderBy('parent_id')->get();
         $result[] = $category;
         self::getCategoriesArray($categories, $category->id, $result);
@@ -48,8 +44,7 @@ class Category extends Model
         return $result;
     }
 
-    private static function buildCategoryTree($categories, $parentId = null, $resourceClassName = null)
-    {
+    private static function buildCategoryTree($categories, $parentId = null, $resourceClassName = null){
         $categoryTree = [];
 
         foreach ($categories as $category) {
@@ -65,8 +60,7 @@ class Category extends Model
         return $categoryTree;
     }
 
-    private static function getCategoriesArray($categories, $parentId, &$result)
-    {
+    private static function getCategoriesArray($categories, $parentId, &$result){
         foreach ($categories as $category) {
             if ($category->parent_id === $parentId) {
                 $result[] = $category;

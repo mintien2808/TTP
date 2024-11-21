@@ -1,23 +1,11 @@
 <?php
-/**
- * User: Zura
- * Date: 8/16/2022
- * Time: 5:26 AM
- */
 
 namespace App\Helpers;
-
 
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Support\Arr;
 
-/**
- * Class Cart
- *
- * @author  Zura Sekhniashvili <zurasekhniashvili@gmail.com>
- * @package App\Helpers
- */
 class Cart
 {
     public static function getCartItemsCount(): int
@@ -66,32 +54,35 @@ class Cart
     }
 
     public static function moveCartItemsIntoDb()
-    {
-        $request = \request();
-        $cartItems = self::getCookieCartItems();
-        $dbCartItems = CartItem::where(['user_id' => $request->user()->id])->get()->keyBy('product_id');
-        $newCartItems = [];
-        foreach ($cartItems as $cartItem) {
-            if (isset($dbCartItems[$cartItem['product_id']])) {
-                continue;
-            }
-            $newCartItems[] = [
-                'user_id' => $request->user()->id,
-                'product_id' => $cartItem['product_id'],
-                'quantity' => $cartItem['quantity'],
-            ];
+{
+    $request = \request();
+    $cartItems = self::getCookieCartItems();  
+    $dbCartItems = CartItem::where(['user_id' => $request->user()->id])->get()->keyBy('product_id'); 
+    $newCartItems = [];
+
+    foreach ($cartItems as $cartItem) {
+        $product = Product::find($cartItem['product_id']);
+        if (!$product) {
+            continue; 
         }
 
-        if (!empty($newCartItems)) {
-            CartItem::insert($newCartItems);
+        if (isset($dbCartItems[$cartItem['product_id']])) {
+            continue; 
         }
+
+        $newCartItems[] = [
+            'user_id' => $request->user()->id,
+            'product_id' => $cartItem['product_id'],
+            'quantity' => $cartItem['quantity'],
+        ];
     }
 
-    /**
-     *
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
-     * @author Zura Sekhniashvili <zurasekhniashvili@gmail.com>
-     */
+    if (!empty($newCartItems)) {
+        CartItem::insert($newCartItems);
+    }
+}
+
+
     public static function getProductsAndCartItems(): array|\Illuminate\Database\Eloquent\Collection
     {
         $cartItems = self::getCartItems();

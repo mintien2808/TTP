@@ -173,16 +173,13 @@ import {USERS_PER_PAGE} from "../../constants";
 import TableHeaderCell from "../../components/core/Table/TableHeaderCell.vue";
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {DotsVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/outline'
-import UserModal from "./UserModal.vue";
+import Toast from "../../components/core/Toast.vue";
 
 const perPage = ref(USERS_PER_PAGE);
 const search = ref('');
 const users = computed(() => store.state.users);
 const sortField = ref('updated_at');
 const sortDirection = ref('desc')
-
-const user = ref({})
-const showUserModal = ref(false);
 
 const emit = defineEmits(['clickEdit'])
 
@@ -224,9 +221,7 @@ function sortUsers(field) {
   getUsers()
 }
 
-function showAddNewModal() {
-  showUserModal.value = true
-}
+
 
 function deleteUser(user) {
   if (!confirm(`Are you sure you want to delete the user?`)) {
@@ -234,7 +229,6 @@ function deleteUser(user) {
   }
   store.dispatch('deleteUser', user)
     .then(res => {
-      // TODO Show notification
       store.dispatch('getUsers')
     })
 }

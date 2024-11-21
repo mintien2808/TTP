@@ -16,9 +16,7 @@ class Product extends Model
 
     protected $fillable = ['title', 'description', 'price', 'quantity', 'published', 'created_by', 'updated_by'];
 
-    /**
-     * Get the options for generating the slug.
-     */
+
     public function getSlugOptions() : SlugOptions
     {
         return SlugOptions::create()

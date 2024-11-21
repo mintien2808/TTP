@@ -12,21 +12,12 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
+
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules()
     {
         return [
@@ -35,16 +26,9 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * Attempt to authenticate the request's credentials.
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function authenticate()
     {
-        $this->ensureIsNotRateLimited();
+        $this->ensureIsNotRateLimited();    
 
         if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
@@ -56,7 +40,8 @@ class LoginRequest extends FormRequest
 
         $user = $this->user();
         $customer = $user->customer;
-        if ($customer->status !== CustomerStatus::Active->value) {
+        if ($customer) {
+
             Auth::guard('web')->logout();
             $this->session()->invalidate();
             $this->session()->regenerateToken();
@@ -69,15 +54,7 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
     }
 
-    /**
-     * Ensure the login request is not rate limited.
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function ensureIsNotRateLimited()
-    {
+    public function ensureIsNotRateLimited(){
         if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }

@@ -22,7 +22,7 @@
         "fakerphp/faker": "^v1.23.1",
         "laravel/breeze": "^v2.0.0",
         "laravel/sail": "^v1.29.1",
-        "laravel/telescope": "^v5.0.0",
+        "laravel/telescope": "^5.2",
         "mockery/mockery": "^1.6.11",
         "nunomaduro/collision": "^v8.1.1",
         "phpunit/phpunit": "^11.0.7",

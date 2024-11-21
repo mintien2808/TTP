@@ -34,7 +34,6 @@ class OrderController extends Controller
             ->where('id', 'like', "%{$search}%")
             ->orderBy($sortField, $sortDirection)
             ->paginate($perPage);
-
         return OrderListResource::collection($query);
     }
 

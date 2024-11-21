@@ -15,23 +15,19 @@ class Customer extends Model
 
     protected $fillable = ['first_name', 'last_name', 'phone', 'status',];
 
-    public function user()
-    {
+    public function user(){
         return $this->belongsTo(User::class);
     }
 
-    private function _getAddresses(): HasOne
-    {
+    private function _getAddresses(): HasOne{
         return $this->hasOne(CustomerAddress::class, 'customer_id', 'user_id');
     }
 
-    public function shippingAddress(): HasOne
-    {
+    public function shippingAddress(): HasOne{
         return $this->_getAddresses()->where('type', '=', AddressType::Shipping->value);
     }
 
-    public function billingAddress(): HasOne
-    {
+    public function billingAddress(): HasOne{
         return $this->_getAddresses()->where('type', '=', AddressType::Billing->value);
     }
 }

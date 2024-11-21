@@ -1,28 +1,16 @@
 <template>
   <GuestLayout title="Sign in to your account">
     <form class="mt-8 space-y-6" method="POST" @submit.prevent="login">
+
       <div v-if="errorMsg" class="flex items-center justify-between py-3 px-5 bg-red-500 text-white rounded">
         {{ errorMsg }}
         <span
           @click="errorMsg = ''"
           class="w-8 h-8 flex items-center justify-center rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]"
         >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </span>
+        </span>
       </div>
+
       <input type="hidden" name="remember" value="true"/>
       <div class="rounded-md shadow-sm -space-y-px">
         <div>
@@ -31,6 +19,9 @@
                  class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                  placeholder="Email address"/>
         </div>
+        
+        <br>
+
         <div>
           <label for="password" class="sr-only">Password</label>
           <input id="password" name="password" type="password" autocomplete="current-password" required=""
@@ -47,11 +38,7 @@
           <label for="remember-me" class="ml-2 block text-sm text-gray-900"> Remember me </label>
         </div>
 
-        <div class="text-sm">
-          <router-link :to="{name: 'requestPassword'}" class="font-medium text-indigo-600 hover:text-indigo-500"> Forgot
-            your password?
-          </router-link>
-        </div>
+
       </div>
 
       <div>
@@ -101,12 +88,12 @@ import store from "../store";
 import router from "../router";
 
 let loading = ref(false);
-let errorMsg = ref("");
+let errorMsg = ref('');
 
 const user = {
   email: '',
   password: '',
-  remember: false
+  remember: false,
 }
 
 function login() {
@@ -121,5 +108,4 @@ function login() {
       errorMsg.value = response.data.message;
     })
 }
-
 </script>

@@ -18,54 +18,25 @@ use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
+    public function index(){
         $perPage = request('per_page', 10);
         $search = request('search', '');
         $sortField = request('sort_field', 'updated_at');
         $sortDirection = request('sort_direction', 'desc');
-
+        
         $query = Customer::query()
-            ->with('user')
-            ->orderBy("customers.$sortField", $sortDirection);
-        if ($search) {
-            $query
-                ->where(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', "%{$search}%")
-                ->join('users', 'customers.user_id', '=', 'users.id')
-                ->orWhere('users.email', 'like', "%{$search}%")
-                ->orWhere('customers.phone', 'like', "%{$search}%");
-        }
-
+        ->where('status', 'active')
+        ->orderBy("customers.$sortField", $sortDirection);
         $paginator = $query->paginate($perPage);
 
         return CustomerListResource::collection($paginator);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\Customer $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Customer $customer)
-    {
+    public function show(Customer $customer){
         return new CustomerResource($customer);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Customer     $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function update(CustomerRequest $request, Customer $customer)
-    {
+    public function update(CustomerRequest $request, Customer $customer){
         $customerData = $request->validated();
         $customerData['updated_by'] = $request->user()->id;
         $customerData['status'] = $customerData['status'] ? CustomerStatus::Active->value : CustomerStatus::Disabled->value;
@@ -102,22 +73,13 @@ class CustomerController extends Controller
 
         return new CustomerResource($customer);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Models\Customer $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Customer $customer)
-    {
+    
+    public function destroy(Customer $customer){
         $customer->delete();
-
         return response()->noContent();
     }
 
-    public function countries()
-    {
+    public function countries(){
         return CountryResource::collection(Country::query()->orderBy('name', 'asc')->get());
     }
 }

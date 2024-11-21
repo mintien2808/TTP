@@ -7,7 +7,6 @@ export function getCurrentUser({commit}, data) {
       return data;
     })
 }
-
 export function login({commit}, data) {
   return axiosClient.post('/login', data)
     .then(({data}) => {
@@ -16,7 +15,6 @@ export function login({commit}, data) {
       return data;
     })
 }
-
 export function logout({commit}) {
   return axiosClient.post('/logout')
     .then((response) => {
@@ -24,37 +22,6 @@ export function logout({commit}) {
 
       return response;
     })
-}
-
-export function getCountries({commit}) {
-  return axiosClient.get('countries')
-    .then(({data}) => {
-      commit('setCountries', data)
-    })
-}
-
-export function getOrders({commit, state}, {url = null, search = '', per_page, sort_field, sort_direction} = {}) {
-  commit('setOrders', [true])
-  url = url || '/orders'
-  const params = {
-    per_page: state.orders.limit,
-  }
-  return axiosClient.get(url, {
-    params: {
-      ...params,
-      search, per_page, sort_field, sort_direction
-    }
-  })
-    .then((response) => {
-      commit('setOrders', [false, response.data])
-    })
-    .catch(() => {
-      commit('setOrders', [false])
-    })
-}
-
-export function getOrder({commit}, id) {
-  return axiosClient.get(`/orders/${id}`)
 }
 
 export function getProducts({commit, state}, {url = null, search = '', per_page, sort_field, sort_direction} = {}) {
@@ -212,6 +179,3 @@ export function updateCategory({commit}, category) {
   return axiosClient.put(`/categories/${category.id}`, category)
 }
 
-export function deleteCategory({commit}, category) {
-  return axiosClient.delete(`/categories/${category.id}`)
-}
