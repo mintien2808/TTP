@@ -17,8 +17,7 @@ use Illuminate\Validation\Rules;
 class RegisteredUserController extends Controller
 {
 
-    public function create()
-{
+    public function create(){
         return view('auth.register');
     }
 

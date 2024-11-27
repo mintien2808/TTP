@@ -1,3 +1,5 @@
+<?php
+?> 
 <x-app-layout>
     <div  x-data="productItem({{ json_encode([
                     'id' => $product->id,
@@ -158,4 +160,45 @@
             </div>
         </div>
     </div>
+    <br>        
+    <div class="p-6 bg-gray-200 border-b border-gray-200">
+        <h1 class="text-xl font-semibold">Bình Luận</h1>
+        <hr class="my-4">
+    
+        @if ($reviews->isEmpty())
+            <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+        @else
+            @foreach ($reviews as $review)
+                <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="font-bold text-gray-800">{{ $review->user->name }}</p>
+                        <p class="text-gray-600 text-sm">Rating: {{ $review->rating }}</p>
+                        
+                    </div>
+                    <p class="text-gray-700">{{ $review->comment }}</p>
+
+                    <div class="mt-4 flex justify-between items-center">
+                        @if (Auth::check() && Auth::user()->id == $review->user_id)
+                            <!-- Nút sửa -->
+                            <a href="{{ route('reviews.edit', $review->id) }}" class="text-blue-500 hover:text-blue-700 transition-colors duration-200">
+                                <span class="font-semibold">Sửa</span>
+                            </a>
+                        @endif
+                        
+                        @if (Auth::check() && Auth::user()->id == $review->user_id)
+                            <form action="{{ route('reviews.destroy', $review->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 transition-colors duration-200">
+                                    <span class="font-semibold">Xoá</span>
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        @endif
+    </div>    
+    </div>
+        
 </x-app-layout>

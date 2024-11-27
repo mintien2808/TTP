@@ -9,7 +9,6 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        /** @var \App\Models\User $user */
         $user = $request->user();
 
         $orders = Order::withCount('items')

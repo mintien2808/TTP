@@ -1,11 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Enums\AddressType;
 use App\Http\Requests\PasswordUpdateRequest;
 use App\Http\Requests\ProfileRequest;
 use App\Models\Country;
+use App\Models\ProductReview;
 use App\Models\CustomerAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,24 +21,32 @@ class ProfileController extends Controller
         $shippingAddress = $customer->shippingAddress ?: new CustomerAddress(['type' => AddressType::Shipping]);
         $billingAddress = $customer->billingAddress ?: new CustomerAddress(['type' => AddressType::Billing]);
         $countries = Country::query()->orderBy('name')->get();
-
         return view('profile.view', compact('customer', 'user', 'shippingAddress', 'billingAddress', 'countries'));
     }
 
     public function store(ProfileRequest $request){
-        $customerData = $request->validated();
-        $shippingData = $customerData['shipping'];
-        $billingData = $customerData['billing'];
+    $customerData = $request->validated();
 
-        /** @var \App\Models\User $user */
-        $user = $request->user();
-        /** @var \App\Models\Customer $customer */
-        $customer = $user->customer;
+    $shippingData = [];
+    $billingData = [];
 
-        DB::beginTransaction();
-        try {
-            $customer->update($customerData);
+    if (isset($customerData['shipping'])) {
+        $shippingData = array_filter($customerData['shipping']);
+    }
 
+    if (isset($customerData['billing'])) {
+        $billingData = array_filter($customerData['billing']); 
+    }
+
+    $user = $request->user();
+    $customer = $user->customer;
+
+    DB::beginTransaction();
+
+    try {
+        $customer->update($customerData);
+
+        if ($shippingData) {
             if ($customer->shippingAddress) {
                 $customer->shippingAddress->update($shippingData);
             } else {
@@ -46,6 +54,9 @@ class ProfileController extends Controller
                 $shippingData['type'] = AddressType::Shipping->value;
                 CustomerAddress::create($shippingData);
             }
+        }
+
+        if ($billingData) {
             if ($customer->billingAddress) {
                 $customer->billingAddress->update($billingData);
             } else {
@@ -53,23 +64,23 @@ class ProfileController extends Controller
                 $billingData['type'] = AddressType::Billing->value;
                 CustomerAddress::create($billingData);
             }
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            Log::critical(__METHOD__ . ' method does not work. '. $e->getMessage());
-            throw $e;
         }
 
-        DB::commit();
+    } catch (\Exception $e) {
+        DB::rollBack();
 
-        $request->session()->flash('flash_message', 'Profile was successfully updated.');
-
-        return redirect()->route('profile');
-
+        Log::critical(__METHOD__ . ' method does not work. ' . $e->getMessage());
+        throw $e;
     }
 
+    DB::commit();
+
+    $request->session()->flash('flash_message', 'Profile was successfully updated.');
+
+    return redirect()->route('profile');
+}
+
     public function passwordUpdate(PasswordUpdateRequest $request){
-        /** @var \App\Models\User $user */
         $user = $request->user();
 
         $passwordData = $request->validated();

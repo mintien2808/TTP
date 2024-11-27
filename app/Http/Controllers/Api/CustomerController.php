@@ -25,7 +25,6 @@ class CustomerController extends Controller
         $sortDirection = request('sort_direction', 'desc');
         
         $query = Customer::query()
-        ->where('status', 'active')
         ->orderBy("customers.$sortField", $sortDirection);
         $paginator = $query->paginate($perPage);
 

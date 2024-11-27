@@ -4,20 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductReview;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
-    {
+    public function index(){
         $query = Product::query();
 
         return $this->renderProducts($query);
     }
 
-    public function byCategory(Category $category)
-    {
+    public function byCategory(Category $category){
         $categories = Category::getAllChildrenByParent($category);
 
         $query = Product::query()
@@ -28,13 +27,14 @@ class ProductController extends Controller
         return $this->renderProducts($query);
     }
 
-    public function view(Product $product)
-    {
-        return view('product.view', ['product' => $product]);
+    public function view(Product $product){
+        $reviews = ProductReview::query()
+            ->where('product_id', $product->id)
+            ->get();
+        return view('product.view', compact('product', 'reviews'));
     }
 
-    private function renderProducts(Builder $query)
-    {
+    private function renderProducts(Builder $query){
         $search = \request()->get('search');
         $sort = \request()->get('sort', '-updated_at');
 

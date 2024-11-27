@@ -6,43 +6,33 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProfileRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
+
     public function rules()
     {
         return [
             'first_name' => ['required'],
             'last_name' => ['required'],
-            'phone' => ['required', 'min:7'],
+            'phone' => ['required', 'min:10'],
             'email' => ['required', 'email'],
 
-            'shipping.address1' => ['required'],
-            'shipping.address2' => ['required'],
-            'shipping.city' => ['required'],
-            'shipping.state' => ['required'],
-            'shipping.zipcode' => ['required'],
-            'shipping.country_code' => ['required', 'exists:countries,code'],
-
-            'billing.address1' => ['required'],
-            'billing.address2' => ['required'],
-            'billing.city' => ['required'],
-            'billing.state' => ['required'],
-            'billing.zipcode' => ['required'],
-            'billing.country_code' => ['required', 'exists:countries,code'],
-
+            'shipping.address1' => ['nullable', 'string'],
+            'shipping.address2' => ['nullable', 'string'],
+            'shipping.city' => ['nullable', 'string'],
+            'shipping.state' => ['nullable', 'string'],
+            'shipping.zipcode' => ['nullable', 'string'],
+            'shipping.country_code' => ['nullable', 'string'],
+    
+            'billing.address1' => ['nullable', 'string'],
+            'billing.address2' => ['nullable', 'string'],
+            'billing.city' => ['nullable', 'string'],
+            'billing.state' => ['nullable', 'string'],
+            'billing.zipcode' => ['nullable', 'string'],
+            'billing.country_code' => ['nullable', 'string'],
         ];
     }
 

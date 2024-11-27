@@ -76,12 +76,14 @@
                             Shipping and taxes calculated at checkout.
                         </p>
 
-                        <form action="{{route('cart.checkout')}}" method="post">
-                            @csrf
-                            <button type="submit" class="btn-primary w-full py-3 text-lg">
-                                Proceed to Checkout
-                            </button>
-                        </form>
+                        <div class="flex justify-between">
+                            <a
+                                href="{{ route('checkout.index') }}"
+                                class="btn btn-primary"
+                            >
+                                Checkout
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <!--/ Product Items -->
@@ -91,7 +93,6 @@
                     You don't have any items in cart
                 </div>
             </template>
-
         </div>
     </div>
 </x-app-layout>
