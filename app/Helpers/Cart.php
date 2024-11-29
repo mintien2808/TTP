@@ -38,6 +38,7 @@ class Cart
         }
     }
 
+
     public static function getCookieCartItems()
     {
         $request = \request();
@@ -81,7 +82,6 @@ class Cart
         CartItem::insert($newCartItems);
     }
 }
-
 
     public static function getProductsAndCartItems(): array|\Illuminate\Database\Eloquent\Collection
     {

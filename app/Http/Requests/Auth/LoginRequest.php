@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Enums\CustomerStatus;
+use App\Models\Customer;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,7 @@ class LoginRequest extends FormRequest
             $this->session()->invalidate();
             $this->session()->regenerateToken();
             throw ValidationException::withMessages([
-                'email' => 'Your account has been disabled',
+                'email' => 'Tài khoản của bạn đã bị khoá. Vui lòng liên hệ với admin.',
             ]);
         }
     }

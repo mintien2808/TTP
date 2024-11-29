@@ -6,20 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('phone')->nullable();
-            $table->string('address1', 255);
-            $table->string('city', 255);
+            $table->unsignedBigInteger('order_id'); 
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+        
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+        
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('phone', 20)->nullable(); 
+            $table->string('address1', 255)->nullable();
+            $table->string('city', 100)->nullable();
             $table->timestamps();
         });
     }

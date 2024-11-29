@@ -10,25 +10,15 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller{
     public function login(Request $request){
         $credentials = $request->validate([
-            'email'=> ['required', 'email'],
+            'name'=> ['required'],
             'password' => 'required',
-            'remember' => 'boolean'
         ]);
-        $remember = $credentials['remember'] ?? false;
-        unset($credentials['remember']);
         if (!Auth::attempt($credentials, $remember)) {
             return response([
                 'message' => 'Sai Thông Tin Đăng Nhập'
             ], 422);
         }
-
         $user = Auth::user();
-        if (!$user->is_admin) {
-            Auth::logout();
-            return response([
-                'message' => 'Tài khoản này không thể đăng nhập ở đây'
-            ], 403);
-        }
         $token = $user->createToken('main')->plainTextToken;
         return response([
             'user' => new UserResource($user),

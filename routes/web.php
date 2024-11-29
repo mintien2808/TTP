@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::delete('reviews/{review}', [ProductReviewController::class, 'destroy'])->name('reviews.destroy');
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.index');   
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/checkout/{order}', [CheckoutController::class, 'checkoutOrder'])->name('cart.checkout-order');
     Route::get('/checkout/thanks', [CheckoutController::class, 'thanks'])->name('checkout.thanks');
     Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
     Route::get('/orders/{order}', [OrderController::class, 'view'])->name('order.view');

@@ -21,8 +21,7 @@ class CartController extends Controller
         return view('cart.index', compact('cartItems', 'products', 'total'));
     }
 
-    public function add(Request $request, Product $product)
-    {
+    public function add(Request $request, Product $product){
         $quantity = $request->post('quantity', 1);
         $user = $request->user();
 
@@ -103,8 +102,7 @@ class CartController extends Controller
         }
     }
 
-    public function remove(Request $request, Product $product)
-    {
+    public function remove(Request $request, Product $product){
         $user = $request->user();
         if ($user) {
             $cartItem = CartItem::query()->where(['user_id' => $user->id, 'product_id' => $product->id])->first();
@@ -129,8 +127,7 @@ class CartController extends Controller
         }
     }
 
-    public function updateQuantity(Request $request, Product $product)
-    {
+    public function updateQuantity(Request $request, Product $product){
         $quantity = (int)$request->post('quantity');
         $user = $request->user();
 

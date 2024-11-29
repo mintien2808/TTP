@@ -37,6 +37,9 @@
                             required 
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                         >
+                        @error('first_name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div>
                         <label for="last_name" class="block text-sm font-medium text-gray-700">Tên</label>
@@ -48,6 +51,9 @@
                             required 
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                         >
+                        @error('last_name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
 
@@ -61,6 +67,9 @@
                         required 
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                     >
+                    @error('phone')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div>
@@ -73,6 +82,9 @@
                         required 
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                     >
+                    @error('address1')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div>
@@ -85,6 +97,9 @@
                         required 
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                     >
+                    @error('city')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <input type="hidden" name="total" value="{{ $total }}">
@@ -92,7 +107,7 @@
                 <div class="flex justify-end mt-4">
                     <button 
                         type="submit" 
-                        name ='payUrl'
+                        name="payUrl"
                         class="bg-purple-600 text-black py-2 px-6 rounded-lg hover:bg-purple-700 focus:ring-purple-600">
                         Xác nhận và thanh toán
                     </button>

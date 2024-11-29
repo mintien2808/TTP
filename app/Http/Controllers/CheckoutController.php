@@ -9,10 +9,12 @@ use App\Mail\NewOrderEmail;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderDetails;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
+use App\Http\Requests\CheckoutRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -34,28 +36,23 @@ class CheckoutController extends Controller
         $customer = $user->customer; 
 
         $billingAddress = $customer->billingAddress ?: new CustomerAddress(['type' => 'Billing']);
-
         return view('checkout.index', compact('cartItems', 'products', 'total','customer', 'user', 'billingAddress'));
     }
 
-    public function process(Request $request){
-        [$products, $cartItems] = Cart::getProductsAndCartItems();  
-
-        $totalAmount = 0;
-        foreach ($products as $product) {
-            $totalAmount += $product->price * $cartItems[$product->id]['quantity'];
-        }
+    public function process(CheckoutRequest $request){
+        $data = $request->validated();
+        
         $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
         
         $partnerCode = 'MOMOBKUN20180529';
         $accessKey = 'klm05TvNBzhg7h7j';
         $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
         $orderInfo = "Thanh Toán Đơn Hàng Của Bạn Tại TTP";
-        $amount = '10000';
+        $amount = $data['total'];
         $orderId = time() . "";
         $redirectUrl = "http://127.0.0.1:8000/checkout/thanks";
         $ipnUrl = "http://127.0.0.1:8000/payment_ipn";
-        $extraData = "";
+        $extraData =  $data['phone']. "," . $data['address1'] . "," . $data['city'] . "," . $data['first_name'] . "," . $data['last_name'];
     
         $requestId = time() . "";
         $requestType = "payWithATM";
@@ -112,6 +109,46 @@ class CheckoutController extends Controller
     }
 
     public function thanks(Request $request){
-        return view('checkout.thanks');
+        $user = $request->user();
+
+        if($user){
+            $customer = $user->customer;
+
+            $order = new Order();
+            $order->id = $request->query('orderId');
+            $order->status = OrderStatus::Completed->value;
+            [$products, $cartItems] = Cart::getProductsAndCartItems();
+
+            $totalAmount = 0;
+            foreach ($products as $product) {
+                $totalAmount += $product->price * $cartItems[$product->id]['quantity'];
+            }
+
+            $order->total_price = $totalAmount;
+            $order->created_by = $user->id;
+            $order->save();
+
+            $orderItem = new OrderItem();
+            $orderItem->order_id = $order->id;
+            $orderItem->product_id = $product->id;
+            $orderItem->quantity = $cartItems[$product->id]['quantity'];
+            $orderItem->unit_price = $product->price * $cartItems[$product->id]['quantity'];
+            $orderItem->save();
+
+            $orderDetails = new OrderDetails();
+            $orderDetails->order_id = $order->id;
+            $orderDetails->first_name = $customer->first_name;
+            $orderDetails->last_name = $customer->last_name;
+            $orderDetails->phone = $request->phone;
+            $orderDetails->address1 = $request->address1;
+            $orderDetails->city = $customer->city;
+            $orderDetails->save();
+
+            $cartItem = CartItem::query()->where(['user_id' => $user->id, 'product_id' => $product->id])->first();
+            if ($cartItem) {
+                $cartItem->delete();
+            }
+        }
+        return view('checkout.thanks')->with('orderId', $request->query('orderId'));
     }
 }
