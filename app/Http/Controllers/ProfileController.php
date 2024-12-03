@@ -32,59 +32,59 @@ class ProfileController extends Controller
     }
 
     public function store(ProfileRequest $request){
-    $customerData = $request->validated();
+        $customerData = $request->validated();
 
-    $shippingData = [];
-    $billingData = [];
+        $shippingData = [];
+        $billingData = [];
 
-    if (isset($customerData['shipping'])) {
-        $shippingData = array_filter($customerData['shipping']);
-    }
-
-    if (isset($customerData['billing'])) {
-        $billingData = array_filter($customerData['billing']); 
-    }
-
-    $user = $request->user();
-    $customer = $user->customer;
-
-    DB::beginTransaction();
-
-    try {
-        $customer->update($customerData);
-
-        if ($shippingData) {
-            if ($customer->shippingAddress) {
-                $customer->shippingAddress->update($shippingData);
-            } else {
-                $shippingData['customer_id'] = $customer->user_id;
-                $shippingData['type'] = AddressType::Shipping->value;
-                CustomerAddress::create($shippingData);
-            }
+        if (isset($customerData['shipping'])) {
+            $shippingData = array_filter($customerData['shipping']);
         }
 
-        if ($billingData) {
-            if ($customer->billingAddress) {
-                $customer->billingAddress->update($billingData);
-            } else {
-                $billingData['customer_id'] = $customer->user_id;
-                $billingData['type'] = AddressType::Billing->value;
-                CustomerAddress::create($billingData);
-            }
+        if (isset($customerData['billing'])) {
+            $billingData = array_filter($customerData['billing']); 
         }
 
-    } catch (\Exception $e) {
-        DB::rollBack();
+        $user = $request->user();
+        $customer = $user->customer;
 
-        Log::critical(__METHOD__ . ' method does not work. ' . $e->getMessage());
-        throw $e;
-    }
+        DB::beginTransaction();
 
-    DB::commit();
+        try {
+            $customer->update($customerData);
 
-    $request->session()->flash('flash_message', 'Profile was successfully updated.');
+            if ($shippingData) {
+                if ($customer->shippingAddress) {
+                    $customer->shippingAddress->update($shippingData);
+                } else {
+                    $shippingData['customer_id'] = $customer->user_id;
+                    $shippingData['type'] = AddressType::Shipping->value;
+                    CustomerAddress::create($shippingData);
+                }
+            }
 
-    return redirect()->route('profile');
+            if ($billingData) {
+                if ($customer->billingAddress) {
+                    $customer->billingAddress->update($billingData);
+                } else {
+                    $billingData['customer_id'] = $customer->user_id;
+                    $billingData['type'] = AddressType::Billing->value;
+                    CustomerAddress::create($billingData);
+                }
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::critical(__METHOD__ . ' method does not work. ' . $e->getMessage());
+            throw $e;
+        }
+
+        DB::commit();
+
+        $request->session()->flash('flash_message', 'Profile was successfully updated.');
+
+        return redirect()->route('profile');
 }
 
     public function passwordUpdate(PasswordUpdateRequest $request){

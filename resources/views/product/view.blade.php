@@ -1,5 +1,3 @@
-<?php
-?> 
 <x-app-layout>
     <div  x-data="productItem({{ json_encode([
                     'id' => $product->id,
@@ -164,7 +162,54 @@
     <div class="p-6 bg-gray-200 border-b border-gray-200">
         <h1 class="text-xl font-semibold">Bình Luận</h1>
         <hr class="my-4">
-    
+        
+        <div x-data="{ open: false }">
+
+            <button @click =" 
+                @if (auth()->check())
+                    open = !open    
+                @else
+                window.location.href = '{{ route('login') }}';
+                @endif
+            " class="btn-primary py-2 px-4 rounded text-white">
+                Đánh giá sản phẩm   
+            </button>
+            
+            <div x-show="open" x-transition class="mt-4 bg-white p-6 rounded-lg shadow-md">
+                <form action="{{ route('reviews.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">  
+            
+                    <input 
+                    type="hidden" 
+                    name="user_id" 
+                    value="@if(auth()->check()) {{ auth()->user()->id }} @endif"
+                    >
+
+                    <div class="mb-3">
+                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Đánh giá:</label>
+                        <select name="rating" id="rating" class="block w-full rounded border-gray-300 focus:ring-purple-500 focus:border-purple-500 text-sm">
+                            <option value="" disabled selected>Chọn số sao</option>
+                            @for ($i = 1; $i <= 5; $i++)
+                                <option value="{{ $i }}">{{ $i }} sao</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">Bình luận:</label>
+                        <textarea name="comment" id="comment" rows="3" class="block w-full rounded border-gray-300 focus:ring-purple-500 focus:border-purple-500 text-sm resize-none"></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class=" bg-purple-500 text-black py-2 px-4 rounded hover:bg-purple-600 text-sm">
+                            Gửi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        
+        <br>
         @if ($reviews->isEmpty())
             <p>Chưa có đánh giá nào cho sản phẩm này.</p>
         @else
@@ -202,3 +247,17 @@
     </div>
         
 </x-app-layout>
+
+
+<script>
+    function LoginRequest() {
+        if (typeof toastr !== 'undefined') {
+            toastr.error('You must be logged in to add a review.');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 2000);
+        } else {
+            console.error('Toastr is not loaded.');
+        }
+    }
+</script>

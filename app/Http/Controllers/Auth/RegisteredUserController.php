@@ -36,14 +36,14 @@ class RegisteredUserController extends Controller
                 'password' => Hash::make($request->password),
             ]);
             
-            $user->markEmailAsVerified(); 
-
+            event(new Registered($user));
+            
             $customer = new Customer();
             $names = explode(" ", $user->name);
             $customer->user_id = $user->id;
             $customer->first_name = $names[0];
             $customer->last_name = $names[1] ?? '';
-            $customer->status = 'active';
+            $customer->status = 'disabled';
             $customer->save();
 
             Auth::login($user);

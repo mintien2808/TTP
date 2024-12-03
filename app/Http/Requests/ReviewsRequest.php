@@ -3,18 +3,18 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use APP\Models\Product;
+use App\Models\User;
 
-class Reviews extends FormRequest
+class ReviewsRequest extends FormRequest
 {
     
-    public function authorize(): bool
+    public function authorize()
     {
-        return false;
+        return true;
     }
 
-   
-    public function rules(): array
-    {
+    public function rules(){
         return [
             'product_id' => ['required', 'exists:products,id'],
             'user_id' => ['required', 'exists:users,id'],

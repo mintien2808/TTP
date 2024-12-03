@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Cookie;
 
 class CartController extends Controller
 {
-    public function index()
-    {
+    public function index(){
         [$products, $cartItems] = Cart::getProductsAndCartItems();
         $total = 0;
         foreach ($products as $product) {

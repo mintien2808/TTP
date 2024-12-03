@@ -2,13 +2,13 @@
     <div class="container mx-auto px-4 py-6">
         <h1 class="text-2xl font-bold mb-4">Checkout</h1>
 
-        <!-- Hiển thị sản phẩm trong giỏ hàng -->
         <div class="mb-6">
             <h2 class="text-xl font-semibold mb-2">Your Items</h2>
             <ul>
                 @foreach ($products as $product)
-                    <li class="mb-2">
-                        <strong>{{ $product->title }}</strong> - 
+                    <li class="mb-2"> 
+                        <img src="{{ $product->image }}" alt="" class="w-16 h-16 object-cover">
+                        <strong>{{ $product->title }}</strong> 
                         Price: ${{ number_format($product->price, 2) }} x 
                         Quantity: {{ $cartItems[$product->id]['quantity'] }}
                     </li>
