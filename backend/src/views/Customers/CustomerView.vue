@@ -17,7 +17,6 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
               <CustomInput v-model="customer.billingAddress.address1" label="Address 1" :errors="errors['billingAddress.address1']"/>
               <CustomInput v-model="customer.billingAddress.address2" label="Address 2" :errors="errors['billingAddress.address2']"/>
-              <CustomInput v-model="customer.billingAddress.city" label="City" :errors="errors['billingAddress.city']"/>
               <CustomInput v-model="customer.billingAddress.zipcode" label="Zip Code" :errors="errors['billingAddress.zipcode']"/>
 
               <CustomInput type="select" :select-options="countries" v-model="customer.billingAddress.country_code"
@@ -36,8 +35,6 @@
                            :errors="errors['shippingAddress.address1']"/>
               <CustomInput v-model="customer.shippingAddress.address2" label="Address 2"
                            :errors="errors['shippingAddress.address2']"/>
-              <CustomInput v-model="customer.shippingAddress.city" label="City"
-                           :errors="errors['shippingAddress.city']"/>
               <CustomInput v-model="customer.shippingAddress.zipcode" label="Zip Code"
                            :errors="errors['shippingAddress.zipcode']"/>
               <CustomInput type="select" :select-options="countries" v-model="customer.shippingAddress.country_code"
@@ -88,13 +85,11 @@ const errors = ref({
   status: [],
   'billingAddress.address1': [],
   'billingAddress.address2': [],
-  'billingAddress.city': [],
   'billingAddress.zipcode': [],
   'billingAddress.country_code': [],
   'billingAddress.state': [],
   'shippingAddress.address1': [],
   'shippingAddress.address2': [],
-  'shippingAddress.city': [],
   'shippingAddress.zipcode': [],
   'shippingAddress.country_code': [],
   'shippingAddress.state': [],

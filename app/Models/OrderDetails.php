@@ -16,7 +16,8 @@ class OrderDetails extends Model
         'last_name',
         'phone',
         'address1',
-        'city',
+        'countries',
+        'states',
     ];
 
     public function order()

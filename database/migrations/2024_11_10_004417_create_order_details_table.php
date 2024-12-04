@@ -21,16 +21,12 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('phone', 20)->nullable(); 
             $table->string('address1', 255)->nullable();
+            $table->string('states',255)->nullable();
             $table->string('city', 100)->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('order_details');

@@ -8,6 +8,8 @@ use Illuminate\Support\Arr;
 
 class Cart
 {
+/*************  ✨ Codeium Command ⭐  *************/
+/******  6467a0b0-1ace-46e6-ae7f-7d36997bf608  *******/
     public static function getCartItemsCount(): int
     {
         $request = \request();

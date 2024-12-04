@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'reset' => 'mật khẩu của bạn đã được reset',
+    'reset' => 'Your password has been reset!s',
     'sent' => 'We have emailed your password reset link!',
     'throttled' => 'Please wait before retrying.',
     'token' => 'This password reset token is invalid.',

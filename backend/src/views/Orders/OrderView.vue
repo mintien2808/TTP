@@ -63,7 +63,6 @@
         <!--  Billing Address Details-->
         <div>
           {{ order.customer.billingAddress.address1 }}, {{ order.customer.billingAddress.address2 }} <br>
-          {{ order.customer.billingAddress.city }}, {{ order.customer.billingAddress.zipcode }} <br>
           {{ order.customer.billingAddress.state }}, {{ order.customer.billingAddress.country }} <br>
         </div>
         <!--/  Billing Address Details-->
@@ -73,7 +72,6 @@
         <!--  Shipping Address Details-->
         <div>
           {{ order.customer.shippingAddress.address1 }}, {{ order.customer.shippingAddress.address2 }} <br>
-          {{ order.customer.shippingAddress.city }}, {{ order.customer.shippingAddress.zipcode }} <br>
           {{ order.customer.shippingAddress.state }}, {{ order.customer.shippingAddress.country }} <br>
         </div>
         <!--/  Shipping Address Details-->

@@ -52,7 +52,7 @@ class CheckoutController extends Controller
         $orderId = time() . "";
         $redirectUrl = "http://127.0.0.1:8000/checkout/thanks";
         $ipnUrl = "http://127.0.0.1:8000/payment_ipn";
-        $extraData =  $data['phone']. "," . $data['address1'] . "," . $data['city'] . "," . $data['first_name'] . "," . $data['last_name'];
+        $extraData =  $data['phone']. "," . $data['address1'] . "," . $data['countries']   . "," . $data['states'] . "," . $data['first_name'] . "," . $data['last_name'];
     
         $requestId = time() . "";
         $requestType = "payWithATM";
@@ -126,14 +126,14 @@ class CheckoutController extends Controller
 
             $order->total_price = $totalAmount;
             $order->created_by = $user->id;
-            // $order->save();
+            $order->save();
 
-            // $orderItem = new OrderItem();
-            // $orderItem->order_id = $order->id;
-            // $orderItem->product_id = $product->id;
-            // $orderItem->quantity = $cartItems[$product->id]['quantity'];
-            // $orderItem->unit_price = $product->price * $cartItems[$product->id]['quantity'];
-            // $orderItem->save();
+            $orderItem = new OrderItem();
+            $orderItem->order_id = $order->id;
+            $orderItem->product_id = $product->id;
+            $orderItem->quantity = $cartItems[$product->id]['quantity'];
+            $orderItem->unit_price = $product->price * $cartItems[$product->id]['quantity'];
+            $orderItem->save();
 
             $orderDetails = new OrderDetails();
             $orderDetails->order_id = $order->id;
@@ -141,13 +141,15 @@ class CheckoutController extends Controller
             $orderDetails->last_name = $customer->last_name;
             $orderDetails->phone = $request->phone;
             $orderDetails->address1 = $request->address1;
-            $orderDetails->city = $customer->city;
-            // $orderDetails->save();
+            $orderDetails->countries = $request->countries;
+            $orderDetails->states = $request->states;
+            
+            $orderDetails->save();
 
-            // $cartItem = CartItem::query()->where(['user_id' => $user->id, 'product_id' => $product->id])->first();
-            // if ($cartItem) {
-            //     $cartItem->delete();
-            // }
+            $cartItem = CartItem::query()->where(['user_id' => $user->id, 'product_id' => $product->id])->first();
+            if ($cartItem) {
+                $cartItem->delete();
+            }
 
                     Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
 

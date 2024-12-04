@@ -7,12 +7,13 @@ use App\Models\Product;
 use App\Models\ProductReview;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use App\Helpers\PriceHelper;
+
 
 class ProductController extends Controller
 {
     public function index(){
         $query = Product::query();
-
         return $this->renderProducts($query);
     }
 
@@ -50,12 +51,11 @@ class ProductController extends Controller
         $products = $query
             ->where('published', '=', 1)
             ->where(function ($query) use ($search) {
-                /** @var $query \Illuminate\Database\Eloquent\Builder */
                 $query->where('products.title', 'like', "%$search%")
                     ->orWhere('products.description', 'like', "%$search%");
             })
 
-            ->paginate(5);
+            ->paginate(8);
 
         return view('product.index', [
             'products' => $products

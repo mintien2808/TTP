@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel E-commerce Website') }}</title>
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-    </style>
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            [x-cloak] {
+                display: none !important;
+            }
+        </style>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>{{ config('app.name', 'Laravel E-commerce Website') }}</title>
+        <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/animate.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/owl.carousel.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/all.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/flaticon.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/themify-icons.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/magnific-popup.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/slick.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">        
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
 </head>
 <body>
-@include('layouts.navigation')
-
-<main class="p-5">
+<main>
     {{ $slot }}
 </main>
 
@@ -31,7 +36,7 @@
     x-transition
     x-cloak
     @notify.window="show($event.detail.message, $event.detail.type || 'success')"
-    class="fixed w-[400px] left-1/2 -ml-[200px] top-16 py-2 px-4 pb-4 text-white"
+    class="fixed w-[400px] left-1/2 -ml-[200px] top-17 py-2 px-4 pb-4 text-white"
     :class="type === 'success' ? 'bg-emerald-500' : 'bg-red-500'"
 >
     <div class="font-semibold" x-text="message"></div>

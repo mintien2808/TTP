@@ -24,7 +24,6 @@ Route::middleware(['guestOrVerified'])->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('home');
     Route::get('/category/{category:slug}', [ProductController::class, 'byCategory'])->name('byCategory');
     Route::get('/product/{product:slug}', [ProductController::class, 'view'])->name('product.view');
-    Route::get('reviews/{review}/edit', [ProductReviewController::class, 'edit'])->name('reviews.edit');
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
 
@@ -42,8 +41,6 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/profile', [ProfileController::class, 'view'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'store'])->name('profile.update');
     Route::post('/profile/password-update', [ProfileController::class, 'passwordUpdate'])->name('profile_password.update');
-
-    Route::put('reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.index');   

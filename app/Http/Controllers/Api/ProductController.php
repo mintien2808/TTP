@@ -39,7 +39,6 @@ class ProductController extends Controller
         $imagePositions = $data['image_positions'] ?? [];
         $categories = $data['categories'] ?? [];
 
-
         $product = Product::create($data);
 
         $this->saveCategories($categories, $product);
@@ -55,8 +54,6 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product){
         $data = $request->validated();
         $data['updated_by'] = $request->user()->id;
-
-        /** @var \Illuminate\Http\UploadedFile[] $images */
         $images = $data['images'] ?? [];
         $deletedImages = $data['deleted_images'] ?? [];
         $imagePositions = $data['image_positions'] ?? [];
@@ -82,7 +79,6 @@ class ProductController extends Controller
     private function saveCategories($categoryIds, Product $product){
         ProductCategory::where('product_id', $product->id)->delete();
         $data = array_map(fn($id) => (['category_id' => $id, 'product_id' => $product->id]), $categoryIds);
-
         ProductCategory::insert($data);
     }
 
@@ -92,47 +88,52 @@ class ProductController extends Controller
                 ->where('id', $id)
                 ->update(['position' => $position]);
         }
-
+    
         foreach ($images as $id => $image) {
             $path = 'images/' . Str::random();
-
-            if (!Storage::exists('public/' . $path)) {
-                Storage::makeDirectory('public/' . $path, 0755, true);
+            if (!Storage::exists($path)) {
+                Storage::makeDirectory($path, 0755, true);
             }
-
-            $name = Str::random() . '.' . $image->getClientOriginalExtension();
-            $storedPath = $image->storeAs('public/' . $path, $name);
-
-            if (!$storedPath) {
+            $name = Str::random().'.'.$image->getClientOriginalExtension();
+            if (!Storage::disk('public')->putFileAs($path, $image, $name)) {
                 throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
             }
-
-            $relativePath = str_replace('public/', '', $storedPath);
-            $publicUrl = Storage::url($relativePath);
-
+            $relativePath = $path . '/' . $name;
+    
             ProductImage::create([
                 'product_id' => $product->id,
                 'path' => $relativePath,
-                'url' => URL::to($publicUrl),
+                'url' => URL::to(Storage::url($relativePath)),
                 'mime' => $image->getClientMimeType(),
                 'size' => $image->getSize(),
-                'position' => $positions[$id] ?? $id + 1,
+                'position' => $positions[$id] ?? $id + 1
             ]);
         }
     }
-
-
+    
     private function deleteImages($imageIds, Product $product){
         $images = ProductImage::query()
             ->where('product_id', $product->id)
             ->whereIn('id', $imageIds)
             ->get();
-
+        
         foreach ($images as $image) {
-            if ($image->path) {
-                Storage::deleteDirectory('/public/' . dirname($image->path));
+            if ($image->path && Storage::exists($image->path)) {
+                Storage::delete($image->path);
+    
+                $directoryPath = dirname($image->path);
+                
+                $remainingFiles = Storage::files($directoryPath);
+                
+                if (empty($remainingFiles)) {
+                    Storage::deleteDirectory($directoryPath);
+                }
             }
+            
             $image->delete();
         }
     }
+
 }
+    
+

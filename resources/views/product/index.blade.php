@@ -1,98 +1,157 @@
 <?php
-/** @var \Illuminate\Database\Eloquent\Collection $products */
-$categoryList = \App\Models\Category::getActiveAsTree();
-
+    $categoryList = \App\Models\Category::getActiveAsTree();
+    
 ?>
 
 <x-app-layout>
-    <x-category-list :category-list="$categoryList" class="-ml-5 -mt-5 -mr-5 px-4"/>
 
-    <div class="flex gap-2 items-center p-3 pb-0" x-data="{
-            selectedSort: '{{ request()->get('sort', '-updated_at') }}',
-            searchKeyword: '{{ request()->get('search') }}',
-            updateUrl() {
-                const params = new URLSearchParams(window.location.search)
-                if (this.selectedSort && this.selectedSort !== '-updated_at') {
-                    params.set('sort', this.selectedSort)
-                } else {
-                    params.delete('sort')
-                }
+    @include('components.header')
+    <!-- Header part end-->
+    @include('components.banner')
+    <!-- feature_part start-->
 
-                if (this.searchKeyword) {
-                    params.set('search', this.searchKeyword)
-                } else {
-                    params.delete('search')
-                }
-                window.location.href = window.location.origin + window.location.pathname + '?'
-                + params.toString();
-            }
-        }">
-        <form action="" method="GET" class="flex-1" @submit.prevent="updateUrl">
-            <x-input type="text" name="search" placeholder="Search for the products"
-                     x-model="searchKeyword"/>
-        </form>
-        <x-input
-            x-model="selectedSort"
-            @change="updateUrl"
-            type="select"
-            name="sort"
-            class="w-full focus:border-purple-600 focus:ring-purple-600 border-gray-300 rounded">
-            <option value="price">Price (ASC)</option>
-            <option value="-price">Price (DESC)</option>
-            <option value="title">Title (ASC)</option>
-            <option value="-title">Title (DESC)</option>
-            <option value="-updated_at">Last Modified at the top</option>
-            <option value="updated_at">Last Modified at the bottom</option>
-        </x-input>
-
-    </div>
+    <section class="feature_part padding_top">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="section_tittle text-center">
+                        <h2>Featured Category</h2>
+                    </div>
+                </div>
+            </div>
+                <x-category-list :category-list="$categoryList"/>
+        </div>
+    </section>
 
     <?php if ( $products->count() === 0 ): ?>
     <div class="text-center text-gray-600 py-16 text-xl">
         There are no products published
     </div>
     <?php else: ?>
-    <div
-        class="grid gap-4 grig-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-3"
-    >
-        @foreach($products as $product)
-            <!-- Product Item -->
-            <div
-                x-data="productItem({{ json_encode([
-                        'id' => $product->id,
-                        'slug' => $product->slug,
-                        'image' => $product->image ?: '/img/noimage.png',
-                        'title' => $product->title,
-                        'price' => $product->price,
-                        'addToCartUrl' => route('cart.add', $product)
-                    ]) }})"
-                    class="border border-1 border-gray-200 rounded-md hover:border-purple-600 transition-colors bg-white"
-                >
-                    <a href="{{ route('product.view', $product->slug) }}"
-                       class="aspect-w-3 aspect-h-2 block overflow-hidden">
-                        <img
-                            :src="product.image"
-                            alt=""
-                            class="object-cover rounded-lg hover:scale-105 hover:rotate-1 transition-transform"
-                        />
-                    </a>
-                    <div class="p-4">
-                        <h3 class="text-lg">
-                            <a href="{{ route('product.view', $product->slug) }}">
-                                {{$product->title}}
-                            </a>
-                        </h3>
-                        <h5 class="font-bold">${{$product->price}}</h5>
-                    </div>
-                    <div class="flex justify-between py-3 px-4">
-                        <button class="btn-primary" @click="addToCart()">
-                            Add to Cart
-                        </button>
+    
+    <section class="product_list section_padding">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="section_tittle text-center">
+                        <h2>awesome <span>shop</span></h2>
                     </div>
                 </div>
-                <!--/ Product Item -->
-            @endforeach
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="product_list_slider owl-carousel">
+                        <div class="single_product_list_slider">
+                            <div class="row align-items-center justify-content-between">
+                                @foreach($products as $product)
+                                <div class="col-lg-3 col-sm-6" x-data="productItem({{ json_encode([
+                                        'id' => $product->id,
+                                        'slug' => $product->slug,
+                                        'image' => $product->image ?: '/img/noimage.png',
+                                        'title' => $product->title,
+                                        'price' => $product->price,
+                                        'addToCartUrl' => route('cart.add', $product)
+                                     ]) }})">
+                                    <div class="single_product_item">
+                                            <a href="{{route('product.view', $product->slug)}}">
+                                                <img src="{{$product->image}}" alt="noimg" style="height:300px;object-cover:fit;">
+                                            </a>
+                                        <div class="single_product_text">
+                                            <h4 style="font-size:23px;">{{$product->title}}</h4>
+                                            <h3 style="font-size:20px;">
+                                                <script>
+                                                    document.write(new Intl.NumberFormat('vi-VN', {
+                                                        style: 'currency',
+                                                        currency: 'VND'
+                                                    }).format({{ $product->price }}));
+                                                </script>
+                                            </h3>
+                                            <button class="btn-mt3" @click="addToCart()" style="color:red   ">
+                                                ADD TO CART
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{$products->appends(['sort' => request('sort'), 'search' => request('search')])->links()}}
+                @endif
+            </div>
         </div>
-        {{$products->appends(['sort' => request('sort'), 'search' => request('search')])->links()}}
-    <?php endif; ?>
+    </section>
+    
+    <!-- product_list part start-->
+
+    <!-- subscribe_area part start-->
+    <section class="subscribe_area section_padding">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="subscribe_area_text text-center">
+                        <h5>Join Our Newsletter</h5>
+                        <h2>Subscribe to get Updated
+                            with new offers</h2>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="enter email address"
+                                aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <a href="#" class="input-group-text btn_2" id="basic-addon2">subscribe now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--::subscribe_area part end::-->
+
+    <!-- subscribe_area part start-->
+    <section class="client_logo padding_top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_1.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_2.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_3.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_4.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_5.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_3.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_1.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_2.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_3.png" alt="">
+                    </div>
+                    <div class="single_client_logo">
+                        <img src="img/client_logo/client_logo_4.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--::subscribe_area part end::-->
+
+    <!--::footer_part start::-->
+    @include('components.footer')
+    <!--::footer_part end::-->
+
+    @include('components.js')
 </x-app-layout>

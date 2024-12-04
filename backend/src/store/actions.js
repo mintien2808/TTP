@@ -49,41 +49,60 @@ export function getProduct({commit}, id) {
 }
 
 export function createProduct({commit}, product) {
-  if (product.images && product.images.length) {
-    const form = new FormData();
-    form.append('title', product.title);
-    product.images.forEach(im => form.append('images[]', im))
-    form.append('description', product.description || '');
-    form.append('published', product.published ? 1 : 0);
-    form.append('price', product.price);
-    product = form;
+  const form = new FormData();
+  
+  form.append('title', product.title);
+  form.append('description', product.description || '');
+  form.append('published', product.published ? 1 : 0);
+  form.append('quantity', product.quantity || 0);
+  form.append('price', product.price);
+
+  if (Array.isArray(product.categories)) {
+    product.categories.forEach(category => {
+      form.append('categories[]', category); 
+    });
   }
-  return axiosClient.post('/products', product)
+
+  if (product.images && product.images.length) {
+    product.images.forEach(image => {
+      if (image instanceof File) {
+        form.append('images[]', image);
+      }
+    });
+  }
+
+  // Gửi dữ liệu đến API Laravel
+  return axiosClient.post('/products', form);
 }
 
 export function updateProduct({commit}, product) {
-  const id = product.id
+  const form = new FormData();
+  
+  form.append('id', product.id);
+  form.append('title', product.title);
+  
   if (product.images && product.images.length) {
-    const form = new FormData();
-    form.append('id', product.id);
-    form.append('title', product.title);
-    product.images.forEach(im => form.append(`images[${im.id}]`, im))
-    if (product.deleted_images) {
-      product.deleted_images.forEach(id => form.append('deleted_images[]', id))
-    }
-    for (let id in product.image_positions) {
-      form.append(`image_positions[${id}]`, product.image_positions[id])
-    }
-    form.append('description', product.description || '');
-    form.append('published', product.published ? 1 : 0);
-    form.append('price', product.price);
-    form.append('_method', 'PUT');
-    product = form;
-  } else {
-    product._method = 'PUT'
+    product.images.forEach(image => {
+      if (image instanceof File) {
+        form.append(`images[${image.id}]`, image);  
+      }
+    });
   }
-  return axiosClient.post(`/products/${id}`, product)
+
+  if (product.deleted_images && product.deleted_images.length) {
+    product.deleted_images.forEach(deletedImageId => {
+      form.append('deleted_images[]', deletedImageId);  
+    });
+  }
+
+  for (let id in product.image_positions) {
+    form.append(`image_positions[${id}]`, product.image_positions[id]);
+  }
+
+  return axiosClient.post(`/products/${product.id}`, form);
 }
+
+
 
 export function deleteProduct({commit}, id) {
   return axiosClient.delete(`/products/${id}`)

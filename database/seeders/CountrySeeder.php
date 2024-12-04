@@ -11,19 +11,21 @@ use PHPUnit\Framework\Constraint\Count;
 class CountrySeeder extends Seeder
 {
     public function run(){
-        $usaStates = [
-            "SG" => 'Sài Gòn',
-            "HN" => 'Hà Nội',
-            "HP" => 'Hải Phòng',
-            "ĐN" => 'Đà Nẵng',
-            "KT" => 'Kontum',
-            'BMT' => 'Buôn Ma Thuột',
+        $states = [
+            "SG" => ['Quận 1', 'Quận 3', 'Quận 5', 'Thủ Đức'],
+            "HN" => ['Hoàn Kiếm', 'Đống Đa', 'Ba Đình', 'Cầu Giấy'],
+            "HP" => ['Hồng Bàng', 'Lê Chân', 'Ngô Quyền'],
+            "ĐN" => ['Hải Châu', 'Cẩm Lệ', 'Ngũ Hành Sơn', 'Thanh Khê'],
+            "KT" => ['Đắk Hà', 'Kon Plông', 'Ngọc Hồi'],
+            "BMT" => ['Ea Tam', 'Tân Lợi', 'Tân An'],
         ];
         $countries = [
-            ['code' => 'geo', 'name' => 'Georgia', 'states' => null],
-            ['code' => 'ind', 'name' => 'India', 'states' => null],
-            ['code' => 'vn', 'name' => 'Việt Nam', 'states' => json_encode($usaStates)],
-            ['code' => 'ger', 'name' => 'Germany', 'states' => null],
+            ['code' => 'SG', 'name' => 'Sài Gòn', 'states' => json_encode($states['SG'])],
+            ['code' => 'HN', 'name' => 'Hà Nội', 'states' => json_encode($states['HN'])],
+            ['code' => 'HP', 'name' => 'Hải Phòng', 'states' => json_encode($states['HP'])],
+            ['code' => 'ĐN', 'name' => 'Đà Nẵng', 'states' => json_encode($states['ĐN'])],
+            ['code' => 'KT', 'name' => 'Kontum', 'states' => json_encode($states['KT'])],
+            ['code' => 'BMT', 'name' => 'Buôn Ma Thuột', 'states' => json_encode($states['BMT'])],
         ];
         Country::insert($countries);
     }

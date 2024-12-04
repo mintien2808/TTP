@@ -99,7 +99,11 @@ onMounted(() => {
 function onSubmit($event, close = false) {
   loading.value = true
   errors.value = {};
-  product.value.quantity = product.value.quantity || null
+
+  product.value.quantity = product.value.quantity || 0;
+
+  console.log('Product before submit:', product.value);
+
   if (product.value.id) {
     store.dispatch('updateProduct', product.value)
       .then(response => {
@@ -121,7 +125,7 @@ function onSubmit($event, close = false) {
     store.dispatch('createProduct', product.value)
       .then(response => {
         loading.value = false;
-
+        product.value.quantity = product.value.quantity || 0;  // Đảm bảo quantity hợp lệ
         if (response.status === 201) {
           product.value = response.data
           store.commit('showToast', 'Product was successfully created');

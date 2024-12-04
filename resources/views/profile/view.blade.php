@@ -19,7 +19,6 @@
                     billingAddress: {{ json_encode([
                         'address1' => old('billing.address1', $billingAddress->address1),
                         'address2' => old('billing.address2', $billingAddress->address2),
-                        'city' => old('billing.city', $billingAddress->city),
                         'state' => old('billing.state', $billingAddress->state),
                         'country_code' => old('billing.country_code', $billingAddress->country_code),
                         'zipcode' => old('billing.zipcode', $billingAddress->zipcode),
@@ -27,7 +26,6 @@
                     shippingAddress: {{ json_encode([
                         'address1' => old('shipping.address1', $shippingAddress->address1),
                         'address2' => old('shipping.address2', $shippingAddress->address2),
-                        'city' => old('shipping.city', $shippingAddress->city),
                         'state' => old('shipping.state', $shippingAddress->state),
                         'country_code' => old('shipping.country_code', $shippingAddress->country_code),
                         'zipcode' => old('shipping.zipcode', $shippingAddress->zipcode),
@@ -105,16 +103,7 @@
                             />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <x-input
-                                type="text"
-                                name="billing[city]"
-                                x-model="billingAddress.city"
-                                placeholder="City"
-                                class="w-full focus:border-purple-600 focus:ring-purple-600 border-gray-300 rounded"
-                            />
-                        </div>
+                    <div class="grid grid-cols-1 gap-3 mb-3">
                         <div>
                             <x-input
                                 type="text"
@@ -192,16 +181,7 @@
                             />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <x-input
-                                type="text"
-                                name="shipping[city]"
-                                x-model="shippingAddress.city"
-                                placeholder="City"
-                                class="w-full focus:border-purple-600 focus:ring-purple-600 border-gray-300 rounded"
-                            />
-                        </div>
+                    <div class="grid grid-cols-1 gap-3 mb-3">
                         <div>
                             <x-input
                                 name="shipping[zipcode]"

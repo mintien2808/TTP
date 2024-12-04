@@ -22,14 +22,12 @@ class ProfileRequest extends FormRequest
 
             'shipping.address1' => ['nullable', 'string'],
             'shipping.address2' => ['nullable', 'string'],
-            'shipping.city' => ['nullable', 'string'],
             'shipping.state' => ['nullable', 'string'],
             'shipping.zipcode' => ['nullable', 'string'],
             'shipping.country_code' => ['nullable', 'string'],
     
             'billing.address1' => ['nullable', 'string'],
             'billing.address2' => ['nullable', 'string'],
-            'billing.city' => ['nullable', 'string'],
             'billing.state' => ['nullable', 'string'],
             'billing.zipcode' => ['nullable', 'string'],
             'billing.country_code' => ['nullable', 'string'],
@@ -41,13 +39,11 @@ class ProfileRequest extends FormRequest
         return [
             'billing.address1' => 'address 1',
             'billing.address2' => 'address 2',
-            'billing.city' => 'city',
             'billing.state' => 'state',
             'billing.zipcode' => 'zip code',
             'billing.country_code' => 'country',
             'shipping.address1' => 'address 1',
             'shipping.address2' => 'address 2',
-            'shipping.city' => 'city',
             'shipping.state' => 'state',
             'shipping.zipcode' => 'zip code',
             'shipping.country_code' => 'country',

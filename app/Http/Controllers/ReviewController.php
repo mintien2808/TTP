@@ -19,16 +19,13 @@ class ReviewController extends Controller
         return redirect()->route('product.view', $product->slug);
     }
 
-    public function update(ReviewsRequest $review){
-        $validated = $review->validated(); 
-        $product = Product::findOrFail($validated['product_id']);
-        
-        return redirect()->route('product.view', $product->slug);
-    }
 
     public function destroy(ProductReview $review)
     {
+        $product = $review->product; 
         $review->delete();
-        return redirect()->route('product.view');
+        
+        return redirect()->route('product.view', $product->slug)->with('message', 'Đánh giá đã được xóa.');
     }
+    
 }

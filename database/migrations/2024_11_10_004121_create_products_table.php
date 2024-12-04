@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('image_mime')->nullable();
             $table->integer('image_size')->nullable();
             $table->longText('description')->nullable();
-            $table->decimal('price', 10, 2);
+            $table->integer('price');
             $table->foreignIdFor(User::class, 'created_by')->nullable();
             $table->foreignIdFor(User::class, 'updated_by')->nullable();
             $table->softDeletes();
@@ -31,13 +31,10 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+
     public function down()
     {
+        Schema::dropIfExists('product_reviews');
         Schema::dropIfExists('products');
     }
 };

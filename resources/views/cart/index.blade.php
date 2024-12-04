@@ -1,4 +1,7 @@
-<x-app-layout>
+<x-app-layout> 
+    @include('components.header')
+
+    <br><br><br><br><br><br><br><br>
     <div class="container lg:w-2/3 xl:w-2/3 mx-auto">
         <h1 class="text-3xl font-bold mb-6">Your Cart Items</h1>
 
@@ -42,8 +45,8 @@
                                         </span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <div class="flex items-center">
-                                            Qty:
+                                        <div class="flex items-center" style="font-size:18px;">
+                                            Quantity:
                                             <input
                                                 type="number"
                                                 min="1"
@@ -72,9 +75,6 @@
                             <span class="font-semibold">Subtotal</span>
                             <span id="cartTotal" class="text-xl" x-text="`$${cartTotal}`"></span>
                         </div>
-                        <p class="text-gray-500 mb-6">
-                            Shipping and taxes calculated at checkout.
-                        </p>
 
                         <div class="flex justify-between">
                             <a
@@ -95,4 +95,7 @@
             </template>
         </div>
     </div>
+
+    @include('components.footer')
+    @include('components.js')
 </x-app-layout>
