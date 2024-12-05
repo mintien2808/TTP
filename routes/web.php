@@ -46,11 +46,13 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.index');   
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::post('/checkout/{order}', [CheckoutController::class, 'checkoutOrder'])->name('cart.checkout-order');
-    Route::get('/checkout/thanks', [CheckoutController::class, 'thanks'])->name('checkout.thank
-    s');
+    Route::get('/checkout/thanks', [CheckoutController::class, 'thanks'])->name('checkout.thanks');
     Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
     Route::get('/orders/{order}', [OrderController::class, 'view'])->name('order.view');
     Route::post('/orders/reorder/{order}', [OrderController::class, 'reorder'])->name('reorder');
+    Route::post('/payment_ipn', [CheckoutController::class, 'paymentIpn'])->name('payment.ipn');
+    Route::get('/checkout/fail', [CheckoutController::class, 'fail'])->name('checkout.fail');
+
 
 });
 

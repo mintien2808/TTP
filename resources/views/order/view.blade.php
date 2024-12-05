@@ -1,4 +1,5 @@
 <x-app-layout>
+    @include('components.header')
     <div class="container mx-auto lg:w-2/3 p-5">
         <h1 class="text-3xl font-bold mb-2">Order #{{$order->id}}</h1>
         <div class="bg-white rounded-lg p-3">
@@ -52,4 +53,6 @@
             @endforeach
         </div>
     </div>
+    @include('components.footer')
+    @include('components.js')
 </x-app-layout>

@@ -1,4 +1,6 @@
 <x-app-layout>
+    <br><br><br><br><br><br></br>
+    @include('components.header')
     <div x-data="{
             flashMessage: '{{\Illuminate\Support\Facades\Session::get('flash_message')}}',
             init() {
@@ -65,7 +67,7 @@
                     </div>
                     <div class="mb-3">
                         <x-input
-                            type="text"
+                            type="hidden"
                             name="email"
                             value="{{old('email', $user->email)}}"
                             placeholder="Your Email"
@@ -262,9 +264,11 @@
                             class="w-full focus:border-purple-600 focus:ring-purple-600 border-gray-300 rounded"
                         />
                     </div>
-                    <x-button>Update</x-button>
-                </form>
+                    <x-button>Update</x-button>   
+                </form>   
             </div>
         </div>
     </div>
+    @include('components.footer')
+
 </x-app-layout>

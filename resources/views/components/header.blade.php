@@ -50,8 +50,8 @@
                         </ul>
                     </div>
                     <div class="hearer_icon d-flex">
-                        <a  href="{{ route('cart.index') }}">
-                            <i class="fa fa-cart-plus" aria-hidden="true" style="font-size:30px;"></i>
+                        <a  href="{{ route('cart.index') }}" title="Cart">
+                            <i class="fa fa-cart-plus" aria-hidden="true" style="font-size:25px;"></i>
                                 <small
                                     x-show="cartItemsCount"
                                     x-transition
@@ -62,18 +62,26 @@
                         </a>
                             @if(Auth::user())
 
-                            <a href="{{route('profile')}}"><i class="fa fa-user fa-5x" aria-hidden="true" style="font-size:30px;"></i></a>
+                            <a href="{{ route('profile') }}" title="Go to Profile">
+                                <i class="fa fa-user fa-5x" aria-hidden="true" style="font-size:25px;"></i>
+                            </a>
+                            
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <a href="{{ route('logout') }} "
+                                <a href="{{ route('logout') }}" title="Logout"
                                    onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                                    <i class="fa fa-sign-out-alt fa-5x" aria-hidden="true" style="font-size:30px;"></i>
+                                            this.closest('form').submit();">
+                                    <i class="fa fa-sign-out-alt fa-5x" aria-hidden="true" style="font-size:25px;"></i>
                                 </a>
                             </form>
+                            
+                            <a href="{{ route('order.index') }}" title="View Order History">
+                                <i class="fa fa-history fa-5x" aria-hidden="true" style="font-size: 25px;"></i>
+                            </a>
+                            
                             @else 
-                                <a href="{{ route('login') }}">
-                                    <i class="fa fa-sign-in-alt fa-5x" aria-hidden="true" style="font-size:30px;"></i>
+                                <a href="{{ route('login') }}" title="Login">
+                                    <i class="fa fa-sign-in-alt fa-5x" aria-hidden="true" style="font-size:25px;"></i>
                                 </a>
                             @endif
                     </div>

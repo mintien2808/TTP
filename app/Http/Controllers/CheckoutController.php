@@ -6,6 +6,8 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Helpers\Cart;
 use App\Mail\NewOrderEmail;
+use App\Mail\PaymentFailEmail;
+use App\Models\Country;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -24,20 +26,35 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CheckoutController extends Controller
 {
-    public function checkout(Request $request){
+    public function checkout(Request $request) {
         [$products, $cartItems] = Cart::getProductsAndCartItems();
         $total = 0;
-
+    
         foreach ($products as $product) {
             $total += $product->price * $cartItems[$product->id]['quantity'];
         }
-
+    
         $user = $request->user();
-        $customer = $user->customer; 
-
+        $customer = $user->customer;
+    
         $billingAddress = $customer->billingAddress ?: new CustomerAddress(['type' => 'Billing']);
-        return view('checkout.index', compact('cartItems', 'products', 'total','customer', 'user', 'billingAddress'));
+        
+        $countries = Country::all();
+        
+
+        foreach ($countries as $country) {
+            $country->states = json_decode($country->states, true); 
+        }
+    
+        $currentStates = [];
+        if ($billingAddress->country_code) {
+            $currentCountry = $countries->firstWhere('code', $billingAddress->country_code);
+            $currentStates = $currentCountry ? $currentCountry->states : [];
+        }
+        
+        return view('checkout.index', compact('cartItems', 'products', 'total', 'customer', 'user', 'billingAddress', 'countries', 'currentStates'));
     }
+    
 
     public function process(CheckoutRequest $request){
         $data = $request->validated();
@@ -52,7 +69,7 @@ class CheckoutController extends Controller
         $orderId = time() . "";
         $redirectUrl = "http://127.0.0.1:8000/checkout/thanks";
         $ipnUrl = "http://127.0.0.1:8000/payment_ipn";
-        $extraData =  $data['phone']. "," . $data['address1'] . "," . $data['countries']   . "," . $data['states'] . "," . $data['first_name'] . "," . $data['last_name'];
+        $extraData =  $data['phone']. "," . $data['address1'] . "," . $data['country_code']   . "," . $data['states'] . "," . $data['first_name'] . "," . $data['last_name'];
     
         $requestId = time() . "";
         $requestType = "payWithATM";
@@ -101,60 +118,64 @@ class CheckoutController extends Controller
         );
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        //execute post
         $result = curl_exec($ch);
-        //close connection
         curl_close($ch);
         return $result;
     }
 
     public function thanks(Request $request){
+        $orderId = $request->query('orderId');
+        $status = $request->query('resultCode');
+
+        if ( $status === '1006') {
+           return view('checkout.fail');
+        }else{
+
         $user = $request->user();
 
-        if($user){
-            $customer = $user->customer;
+            if($user){
+                $customer = $user->customer;
 
-            $order = new Order();
-            $order->id = $request->query('orderId');
-            $order->status = OrderStatus::Completed->value;
-            [$products, $cartItems] = Cart::getProductsAndCartItems();
+                $order = new Order();
+                $order->id = $request->query('orderId');
+                $order->status = OrderStatus::Completed->value;
+                [$products, $cartItems] = Cart::getProductsAndCartItems();
 
-            $totalAmount = 0;
-            foreach ($products as $product) {
-                $totalAmount += $product->price * $cartItems[$product->id]['quantity'];
+                $totalAmount = 0;
+                foreach ($products as $product) {
+                    $totalAmount += $product->price * $cartItems[$product->id]['quantity'];
+                }
+
+                $order->total_price = $totalAmount;
+                $order->created_by = $user->id;
+                $order->save();
+
+                $orderItem = new OrderItem();
+                $orderItem->order_id = $order->id;
+                $orderItem->product_id = $product->id;
+                $orderItem->quantity = $cartItems[$product->id]['quantity'];
+                $orderItem->unit_price = $product->price * $cartItems[$product->id]['quantity'];
+                $orderItem->save();
+
+                $orderDetails = new OrderDetails();
+                $orderDetails->order_id = $order->id;
+                $orderDetails->first_name = $customer->first_name;
+                $orderDetails->last_name = $customer->last_name;
+                $orderDetails->phone = $request->phone;
+                $orderDetails->address1 = $request->address1;
+                $orderDetails->city = $request->countries;
+                $orderDetails->states = $request->states;
+                
+                $orderDetails->save();
+
+                $cartItem = CartItem::query()->where(['user_id' => $user->id, 'product_id' => $product->id])->first();
+                if ($cartItem) {
+                    $cartItem->delete();
+                }
+                Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
             }
-
-            $order->total_price = $totalAmount;
-            $order->created_by = $user->id;
-            $order->save();
-
-            $orderItem = new OrderItem();
-            $orderItem->order_id = $order->id;
-            $orderItem->product_id = $product->id;
-            $orderItem->quantity = $cartItems[$product->id]['quantity'];
-            $orderItem->unit_price = $product->price * $cartItems[$product->id]['quantity'];
-            $orderItem->save();
-
-            $orderDetails = new OrderDetails();
-            $orderDetails->order_id = $order->id;
-            $orderDetails->first_name = $customer->first_name;
-            $orderDetails->last_name = $customer->last_name;
-            $orderDetails->phone = $request->phone;
-            $orderDetails->address1 = $request->address1;
-            $orderDetails->countries = $request->countries;
-            $orderDetails->states = $request->states;
-            
-            $orderDetails->save();
-
-            $cartItem = CartItem::query()->where(['user_id' => $user->id, 'product_id' => $product->id])->first();
-            if ($cartItem) {
-                $cartItem->delete();
-            }
-
-                    Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
-
+            return view('checkout.thanks')->with('orderId', $orderId);
         }
-        
-        return view('checkout.thanks')->with('orderId', $request->query('orderId'));
     }
+    
 }

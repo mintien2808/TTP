@@ -20,8 +20,9 @@ class CheckoutRequest extends FormRequest
             'address1' => ['required', 'string'],
             'phone' => ['required', 'numeric', 'digits:10'],
             'total' => ['required', 'numeric'],
-            'countries' => ['required'],
+            'country_code' => ['required'],
             'states' => ['required'],
+            'selector' => ['required'],
         ];
     }
     
