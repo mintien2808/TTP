@@ -155,13 +155,17 @@ function getForPage(ev, link) {
   getOrders(link.url)
 }
 
-function getOrders(url = null) {
+function getOrders(url = "http://localhost:8000/api/orders") {
   store.dispatch("getOrders", {
     url,
     search: search.value,
     per_page: perPage.value,
     sort_field: sortField.value,
     sort_direction: sortDirection.value
+  }).then(response => {
+    console.log(response);
+  }).catch(error => {
+    console.error("Error fetching data:", error);
   });
 }
 

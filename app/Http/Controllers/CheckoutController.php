@@ -174,7 +174,7 @@ class CheckoutController extends Controller
                 }
                 Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
             }
-            return view('checkout.thanks')->with('orderId', $orderId);
+            return view('checkout.thanks');
         }
     }
     

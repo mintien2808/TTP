@@ -102,8 +102,6 @@ export function updateProduct({commit}, product) {
   return axiosClient.post(`/products/${product.id}`, form);
 }
 
-
-
 export function deleteProduct({commit}, id) {
   return axiosClient.delete(`/products/${id}`)
 }
